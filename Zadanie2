@@ -1,0 +1,75 @@
+namespace Zadanie2
+{
+  
+        class Prostokąt
+        {
+            private double bokA;
+            private double bokB;
+
+            public double BokA
+            {
+                get { return bokA; }
+                set
+                {
+                    if (double.IsNaN(value) || value < 0)
+                    {
+                        throw new ArgumentException("Długość boku A powinna być skończoną nieujemną liczbą.");
+                    }
+                    bokA = value;
+                }
+            }
+
+            public double BokB
+            {
+                get { return bokB; }
+                set
+                {
+                    if (double.IsNaN(value) || value < 0)
+                    {
+                        throw new ArgumentException("Długość boku B powinna być skończoną nieujemną liczbą.");
+                    }
+                    bokB = value;
+                }
+            }
+
+            private static Dictionary<char, decimal> wysokośćArkusza0 = new Dictionary<char, decimal>
+            {
+                ['A'] = 1189,
+                ['B'] = 1414,
+                ['C'] = 1297
+            };
+
+            public static Prostokąt ArkuszPapieru(string format)
+            {
+                if (format.Length < 2)
+                {
+                    throw new ArgumentException("Nieprawidłowy format arkusza papieru.");
+                }
+
+                char klucz = format[0];
+                if (!wysokośćArkusza0.ContainsKey(klucz))
+                {
+                    throw new ArgumentException("Nieprawidłowy format arkusza papieru.");
+                }
+
+                byte indeks;
+                if (!byte.TryParse(format.Substring(1), out indeks))
+                {
+                    throw new ArgumentException("Nieprawidłowy format arkusza papieru.");
+                }
+
+                decimal wysokość = wysokośćArkusza0[klucz];
+                double pierwiastekZDwóch = Math.Sqrt(2);
+                double bokA = (double)(Decimal.ToInt32(wysokość) / Math.Pow(pierwiastekZDwóch, indeks));
+                double bokB = bokA / pierwiastekZDwóch;
+
+                return new Prostokąt(bokA, bokB);
+            }
+
+            public Prostokąt(double bokA, double bokB)
+            {
+                BokA = bokA;
+                BokB = bokB;
+            }
+        }
+    }
