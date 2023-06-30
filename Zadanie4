@@ -1,0 +1,144 @@
+
+namespace zadanie4
+{
+    public abstract class Produkt
+    {
+        private string nazwa;
+        private decimal cenaNetto;
+        private string kategoriaVAT;
+
+        public string Nazwa
+        {
+            get { return nazwa; }
+            set { nazwa = value; }
+        }
+
+        public decimal CenaNetto
+        {
+            get { return cenaNetto; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(cenaNetto), "Cena netto nie może być ujemna!");
+                }
+                cenaNetto = value;
+            }
+        }
+
+        public string KategoriaVAT
+        {
+            get { return kategoriaVAT; }
+            set
+            {
+                if (!KategorieVAT.SlownikKategoriiVAT.ContainsKey(value))
+                {
+                    throw new ArgumentException("Nieprawidłowa kategoria VAT!");
+                }
+                kategoriaVAT = value;
+            }
+        }
+
+        public decimal CenaBrutto
+        {
+            get
+            {
+                decimal stawkaVAT = KategorieVAT.SlownikKategoriiVAT[KategoriaVAT];
+                return CenaNetto + (CenaNetto * stawkaVAT);
+            }
+        }
+
+        public string KrajPochodzenia { get; set; }
+        public Produkt(string nazwa, decimal cenaNetto, string kategoriaVAT, string krajPochodzenia)
+        {
+            Nazwa = nazwa;
+            CenaNetto = cenaNetto;
+            KategoriaVAT = kategoriaVAT;
+            KrajPochodzenia = krajPochodzenia;
+        }
+    }
+
+    public class ProduktSpożywczy : Produkt
+    {
+        public decimal Kalorie { get; set; }
+        public HashSet<string> Alergeny { get; set; }
+
+        public ProduktSpożywczy(string nazwa, decimal cenaNetto, string kategoriaVAT, string krajPochodzenia, decimal kalorie, HashSet<string> alergeny)
+            : base(nazwa, cenaNetto, kategoriaVAT, krajPochodzenia)
+        {
+            Kalorie = kalorie;
+            Alergeny = alergeny;
+        }
+    }
+
+    public class ProduktSpożywczyNaWagę : ProduktSpożywczy
+    {
+        public decimal Waga { get; set; }
+
+        public ProduktSpożywczyNaWagę(string nazwa, decimal cenaNetto, string kategoriaVAT, string krajPochodzenia, decimal kalorie, HashSet<string> alergeny, decimal waga)
+            : base(nazwa, cenaNetto, kategoriaVAT, krajPochodzenia, kalorie, alergeny)
+        {
+            Waga = waga;
+        }
+    }
+
+    public class ProduktSpożywczyPaczka : ProduktSpożywczy
+    {
+        public decimal Waga { get; set; }
+
+        public ProduktSpożywczyPaczka(string nazwa, decimal cenaNetto, string kategoriaVAT, string krajPochodzenia, decimal kalorie, HashSet<string> alergeny, decimal waga)
+            : base(nazwa, cenaNetto, kategoriaVAT, krajPochodzenia, kalorie, alergeny)
+        {
+            Waga = waga;
+        }
+    }
+
+    public class ProduktSpożywczyNapój : ProduktSpożywczyPaczka
+    {
+        public uint Objętość { get; set; }
+
+        public ProduktSpożywczyNapój(string nazwa, decimal cenaNetto, string kategoriaVAT, string krajPochodzenia, decimal kalorie, HashSet<string> alergeny, decimal waga, uint objętość)
+            : base(nazwa, cenaNetto, kategoriaVAT, krajPochodzenia, kalorie, alergeny, waga)
+        {
+            Objętość = objętość;
+        }
+    }
+    public class Wielopak
+    {
+        public Produkt Produkt { get; set; }
+        public ushort Ilość { get; set; }
+        public decimal CenaNetto { get; set; }
+
+        public decimal CenaBrutto
+        {
+            get { return Produkt.CenaBrutto * Ilość; }
+        }
+
+        public string KategoriaVAT
+        {
+            get { return Produkt.KategoriaVAT; }
+        }
+
+        public string KrajPochodzenia
+        {
+            get { return Produkt.KrajPochodzenia; }
+        }
+
+        public Wielopak(Produkt produkt, ushort ilość, decimal cenaNetto)
+        {
+            Produkt = produkt;
+            Ilość = ilość;
+            CenaNetto = cenaNetto;
+        }
+    }
+    public static class KategorieVAT
+    {
+        public static Dictionary<string, decimal> SlownikKategoriiVAT = new Dictionary<string, decimal>()
+    {
+        { "A", 0.08m },
+        { "B", 0.15m },
+        { "C", 0.23m },
+        { "D", 0.05m }
+    };
+    }
+}
