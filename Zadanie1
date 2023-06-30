@@ -1,0 +1,53 @@
+namespace zadanie1
+{
+    public class Osoba
+    {
+        public string imie;
+        public string nazwisko;
+        public DateTime? dataUrodzenia = null;
+        public DateTime? dataSmierci = null;
+
+        public string ImieNazwisko
+        {
+            get { return imie + " " + nazwisko; }
+            set
+            {
+                string[] parts = value.Split(' ');
+                imie = parts[0];
+                nazwisko = parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : "";
+            }
+        }
+
+        public string Imie
+        {
+            get { return imie; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException("Imię nie może być puste.");
+                }
+                imie = value;
+            }
+        }
+
+        public TimeSpan? Wiek
+        {
+            get
+            {
+                if (!dataSmierci.HasValue && !dataUrodzenia.HasValue)
+                {
+                    return null;
+                }
+                else if (!dataSmierci.HasValue && dataUrodzenia.HasValue)
+                {
+                    return DateTime.Now - dataUrodzenia.Value;
+                }
+                else
+                {
+                    return dataSmierci.Value - dataUrodzenia.Value;
+                }
+            }
+        }
+    }
+}
