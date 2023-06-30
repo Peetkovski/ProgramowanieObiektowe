@@ -1,0 +1,135 @@
+namespace zadanie3
+{
+    class Wektor
+    {
+        private double[] wspolrzedne;
+
+        public double[] Wspolrzedne => wspolrzedne;
+        public double Dlugosc => (double)IloczynSkalarny(this, this);
+        public byte Wymiar => (byte)wspolrzedne.Length;
+
+        public double this[byte indeks]
+        {
+            get { return wspolrzedne[indeks]; }
+            set { wspolrzedne[indeks] = value; }
+        }
+
+        public Wektor(byte wymiar)
+        {
+            wspolrzedne = new double[wymiar];
+        }
+
+        public Wektor(params double[] wspolrzedne)
+        {
+            this.wspolrzedne = wspolrzedne;
+        }
+
+        public static double? IloczynSkalarny(Wektor V, Wektor W)
+        {
+            if (V.Wymiar != W.Wymiar)
+            {
+                return null;
+            }
+
+            double iloczyn = 0;
+            for (int i = 0; i < V.Wymiar; i++)
+            {
+                iloczyn += V.Wspolrzedne[i] * W.Wspolrzedne[i];
+            }
+
+            return iloczyn;
+        }
+
+        public static Wektor Suma(params Wektor[] Wektory)
+        {
+            if (Wektory.Length == 0)
+            {
+                throw new ArgumentException("Brak wektorów do zsumowania.");
+            }
+
+            int wymiar = Wektory[0].Wymiar;
+            for (int i = 1; i < Wektory.Length; i++)
+            {
+                if (Wektory[i].Wymiar != wymiar)
+                {
+                    throw new ArgumentException("Wektory mają różny wymiar.");
+                }
+            }
+
+            Wektor suma = new Wektor((byte)wymiar);
+            for (int i = 0; i < wymiar; i++)
+            {
+                for (int j = 0; j < Wektory.Length; j++)
+                {
+                    suma[i] += Wektory[j][i];
+                }
+            }
+
+            return suma;
+        }
+
+        public static Wektor operator +(Wektor x, Wektor y)
+        {
+            if (x.Wymiar != y.Wymiar)
+            {
+                throw new ArgumentException("Wektory mają różny wymiar.");
+            }
+
+            Wektor suma = new Wektor(x.Wymiar);
+            for (int i = 0; i < x.Wymiar; i++)
+            {
+                suma.Wspolrzedne[i] = x.Wspolrzedne[i] + y.Wspolrzedne[i];
+            }
+
+            return suma;
+        }
+
+        public static Wektor operator -(Wektor x, Wektor y)
+        {
+            if (x.Wymiar != y.Wymiar)
+            {
+                throw new ArgumentException("Wektory mają różny wymiar.");
+            }
+
+            Wektor roznica = new Wektor(x.Wymiar);
+            for (int i = 0; i < x.Wymiar; i++)
+            {
+                roznica.Wspolrzedne[i] = x.Wspolrzedne[i] - y.Wspolrzedne[i];
+            }
+
+            return roznica;
+        }
+
+        public static Wektor operator *(Wektor x, double y)
+        {
+            Wektor wynik = new Wektor(x.Wymiar);
+            for (int i = 0; i < x.Wymiar; i++)
+            {
+                wynik.Wspolrzedne[i] = x.Wspolrzedne[i] * y;
+            }
+
+            return wynik;
+        }
+
+        public static Wektor operator *(double x, Wektor y)
+        {
+            return y * x;
+        }
+
+        public static Wektor operator /(Wektor x, double y)
+        {
+            if (y == 0)
+            {
+                throw new ArgumentException("Dzielenie przez zero.");
+            }
+
+            Wektor wynik = new Wektor(x.Wymiar);
+            for (int i = 0; i < x.Wymiar; i++)
+            {
+                wynik.Wspolrzedne[i] = x.Wspolrzedne[i] / y;
+            }
+
+            return wynik;
+        }
+    }
+}
