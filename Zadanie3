@@ -57,12 +57,9 @@ namespace zadanie3
             }
 
             Wektor suma = new Wektor((byte)wymiar);
-            for (int i = 0; i < wymiar; i++)
+            for (int j = 0; j < Wektory.Length; j++)
             {
-                for (int j = 0; j < Wektory.Length; j++)
-                {
-                    suma[i] += Wektory[j][i];
-                }
+                suma += Wektory[j];
             }
 
             return suma;
